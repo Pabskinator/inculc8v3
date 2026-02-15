@@ -21,7 +21,7 @@ export function Scene({ onNodeHover }: { onNodeHover?: (node: NodeData) => void 
     // Generate nodes and refs in the same memo so they are stable
     const { nodes, nodeRefs } = useMemo(() => {
         const temp: NodeData[] = []
-        const refs: React.RefObject<THREE.Mesh>[] = []
+        const refs: React.RefObject<THREE.Mesh | null>[] = []
 
         const data = [
             { id: "SYS_01", title: "HIGH PERFORMANCE", description: "Zero-latency rendering with Next.js & Turbopack." },
@@ -98,7 +98,7 @@ function StarField() {
     )
 }
 
-function HeroSceneGroup({ nodes, nodeRefs, onNodeHover }: { nodes: NodeData[], nodeRefs: React.RefObject<THREE.Mesh>[], onNodeHover?: (node: NodeData) => void }) {
+function HeroSceneGroup({ nodes, nodeRefs, onNodeHover }: { nodes: NodeData[], nodeRefs: React.RefObject<THREE.Mesh | null>[], onNodeHover?: (node: NodeData) => void }) {
     const groupRef = useRef<THREE.Group>(null)
     const { viewport, size } = useThree()
 
@@ -144,7 +144,7 @@ function HeroSceneGroup({ nodes, nodeRefs, onNodeHover }: { nodes: NodeData[], n
 
             {/* Render live connections using a single efficient component */}
             <NetworkConnections
-                nodeRefs={nodeRefs as React.RefObject<THREE.Mesh>[]}
+                nodeRefs={nodeRefs}
                 count={nodes.length}
             />
         </group>
@@ -152,7 +152,7 @@ function HeroSceneGroup({ nodes, nodeRefs, onNodeHover }: { nodes: NodeData[], n
 }
 
 // Optimized component that draws ALL lines in a single geometry to reduce draw calls
-function NetworkConnections({ nodeRefs, count }: { nodeRefs: React.RefObject<THREE.Mesh>[], count: number }) {
+function NetworkConnections({ nodeRefs, count }: { nodeRefs: React.RefObject<THREE.Mesh | null>[], count: number }) {
     const linesGeometryRef = useRef<THREE.BufferGeometry>(null)
 
     // We need 2 points per line, and (count - 1) lines
