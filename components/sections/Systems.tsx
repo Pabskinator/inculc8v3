@@ -138,7 +138,7 @@ export function Systems() {
                                         <Bar key={idx} height={height} color={mod.chartColor} index={idx} />
                                     ))}
                                 </div>
-                            </div>
+                            </motion.div>
                         ))}
                     </div>
 
