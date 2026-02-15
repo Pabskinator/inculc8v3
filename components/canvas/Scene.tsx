@@ -203,8 +203,11 @@ function NetworkConnections({ nodeRefs, count }: { nodeRefs: React.RefObject<THR
     useFrame(() => {
         if (!linesGeometryRef.current) return
 
-        // OPTIMIZATION (E): Loop Throttling
-        // Only update every 3rd frame to save CPU
+        // OPTIMIZATION (E): Loop Throttling & Off-screen Pausing
+        // 1. Hard Stop: If scrolled past hero, do nothing.
+        if (window.scrollY > window.innerHeight * 1.2) return
+
+        // 2. Throttling: Only update every 3rd frame to save CPU
         frameCount.current++
         if (frameCount.current % 3 !== 0) return
 
@@ -256,6 +259,9 @@ const NetworkNode = forwardRef<THREE.Mesh, { data: NodeData, onHover?: (n: NodeD
     const color = isAccent ? "#00FF41" : "#D4D4D4"
 
     useFrame((state) => {
+        // Optimization: Stop animating if off-screen
+        if (window.scrollY > window.innerHeight * 1.2) return
+
         // Access current via the forwarded ref if needed for animation logic inside
         const mesh = (ref as React.MutableRefObject<THREE.Mesh>)?.current
         if (!mesh) return

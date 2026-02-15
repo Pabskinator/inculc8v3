@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 import Lenis from "lenis";
+import gsap from "gsap";
 import { usePathname } from "next/navigation";
 
 const LenisContext = createContext<Lenis | null>(null);
@@ -34,14 +35,16 @@ export function SmoothScroller({ children }: { children: React.ReactNode }) {
 
         setLenis(lenisInstance);
 
-        function raf(time: number) {
-            lenisInstance.raf(time);
-            requestAnimationFrame(raf);
+        // GSAP Integration: Use GSAP's ticker for a single unified RAF loop
+        // This solves the "multiple RAF loops" performance bottleneck
+        function update(time: number, deltaTime: number, frame: number) {
+            lenisInstance.raf(time * 1000);
         }
 
-        requestAnimationFrame(raf);
+        gsap.ticker.add(update);
 
         return () => {
+            gsap.ticker.remove(update);
             lenisInstance.destroy();
             setLenis(null);
         };
