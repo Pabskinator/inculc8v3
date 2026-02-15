@@ -15,10 +15,30 @@ const navItems = [
     { name: "SIGNAL", href: "#signal" },
 ]
 
-export function Navbar() {
+const [hidden, setHidden] = useState(false)
+const isMobile = useMobile()
+
+// Only use scroll hooks on Desktop
+// We can't conditionally call hooks, so we must always call them, 
+// OR we return early if we were passing them as props.
+// BUT since we can't easily split Navbar without deeper refactor, 
+// we will accept the overhead here BUT disable the heavy setState logic.
+// Actually, splitting is cleaner.
+
+if (isMobile) {
+    return (
+        <header className="fixed top-0 left-0 right-0 z-50 flex justify-center py-6 pointer-events-none">
+            <NavbarContent isMobile={true} />
+        </header>
+    )
+}
+
+return <NavbarDesktop />
+}
+
+function NavbarDesktop() {
     const [hidden, setHidden] = useState(false)
     const { scrollY } = useScroll()
-    const lenis = useLenis()
 
     useMotionValueEvent(scrollY, "change", (latest) => {
         const previous = scrollY.getPrevious() || 0
@@ -28,6 +48,24 @@ export function Navbar() {
             setHidden(false)
         }
     })
+
+    return (
+        <motion.header
+            variants={{
+                visible: { y: 0 },
+                hidden: { y: "-100%" },
+            }}
+            animate={hidden ? "hidden" : "visible"}
+            transition={{ duration: 0.35, ease: "easeInOut" }}
+            className="fixed top-0 left-0 right-0 z-50 flex justify-center py-6 pointer-events-none"
+        >
+            <NavbarContent isMobile={false} />
+        </motion.header>
+    )
+}
+
+function NavbarContent({ isMobile }: { isMobile: boolean }) {
+    const lenis = useLenis()
 
     const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
         e.preventDefault()
@@ -40,43 +78,37 @@ export function Navbar() {
     }
 
     return (
-        <motion.header
-            variants={{
-                visible: { y: 0 },
-                hidden: { y: "-100%" },
-            }}
-            animate={hidden ? "hidden" : "visible"}
-            transition={{ duration: 0.35, ease: "easeInOut" }}
-            className="fixed top-0 left-0 right-0 z-50 flex justify-center py-6 pointer-events-none"
-        >
-            <nav className="pointer-events-auto bg-black/50 backdrop-blur-md border border-white/10 px-6 py-3 rounded-full flex items-center gap-8">
-                {/* Logo/Home */}
-                <a
-                    href="#"
-                    onClick={(e) => handleNavClick(e, '#')}
-                    className="hover:opacity-80 transition-opacity cursor-pointer"
-                >
-                    <Logo className="w-auto h-8" />
-                </a>
+        <nav className="pointer-events-auto bg-black/50 backdrop-blur-md border border-white/10 px-6 py-3 rounded-full flex items-center gap-8">
+            {/* Logo/Home */}
+            <a
+                href="#"
+                onClick={(e) => handleNavClick(e, '#')}
+                className="hover:opacity-80 transition-opacity cursor-pointer"
+            >
+                <Logo className="w-auto h-8" />
+            </a>
 
-                {/* Links */}
-                <div className="hidden md:flex items-center gap-6">
-                    {navItems.map((item) => (
-                        <a
-                            key={item.name}
-                            href={item.href}
-                            onClick={(e) => handleNavClick(e, item.href)}
-                            className="text-xs font-mono text-white/60 hover:text-accent transition-colors tracking-widest relative group cursor-pointer"
-                        >
-                            <span className="relative z-10">{item.name}</span>
-                            <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-accent transition-all group-hover:w-full" />
-                        </a>
-                    ))}
-                </div>
+            {/* Links */}
+            <div className="hidden md:flex items-center gap-6">
+                {navItems.map((item) => (
+                    <a
+                        key={item.name}
+                        href={item.href}
+                        onClick={(e) => handleNavClick(e, item.href)}
+                        className="text-xs font-mono text-white/60 hover:text-accent transition-colors tracking-widest relative group cursor-pointer"
+                    >
+                        <span className="relative z-10">{item.name}</span>
+                        <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-accent transition-all group-hover:w-full" />
+                    </a>
+                ))}
+            </div>
 
-                {/* Status indicator */}
-                <div className="w-2 h-2 rounded-full bg-accent animate-pulse shadow-[0_0_10px_var(--accent)]" />
-            </nav>
-        </motion.header>
+            {/* Status indicator */}
+            <div className="w-2 h-2 rounded-full bg-accent animate-pulse shadow-[0_0_10px_var(--accent)]" />
+        </nav>
     )
 }
+
+// Placeholder export to satisfy linter (will be deleted by replace)
+export function NavbarLegacy() {
+    return null

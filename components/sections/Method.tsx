@@ -41,46 +41,83 @@ const protocols = [
 ]
 
 export function Method() {
-    const containerRef = useRef<HTMLDivElement>(null)
-    // REMOVED: useState for rocketRotation and isBoosting (caused re-renders)
-    // REMOVED: boostTimeoutRef
+    const isMobile = useMobile()
 
-    // Global scroll for direction/velocity detection
+    if (isMobile) {
+        return <MethodMobile />
+    }
+
+    return <MethodDesktop />
+}
+
+function MethodMobile() {
+    return (
+        <section id="method" className="relative min-h-screen py-20 z-20 overflow-hidden">
+            {/* Simple Background */}
+            <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:100%_10vh] pointer-events-none" />
+
+            <div className="container mx-auto px-4 relative z-10">
+                <div className="text-center mb-16">
+                    <h2 className="text-5xl font-heading font-bold mb-6 tracking-tighter">
+                        <span className="text-white block">MISSION</span>
+                        <span className="text-transparent bg-clip-text bg-gradient-to-b from-white/80 to-white/20">TRAJECTORY</span>
+                    </h2>
+                </div>
+
+                <div className="space-y-12">
+                    {protocols.map((p, i) => (
+                        <motion.div
+                            key={p.id}
+                            initial={{ opacity: 0, y: 30 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.5, delay: i * 0.1 }}
+                            className="bg-white/5 backdrop-blur-xl border border-white/10 p-8 rounded-3xl relative overflow-hidden"
+                        >
+                            <div className="flex items-center gap-4 mb-6">
+                                <div className="p-3 bg-accent/10 rounded-full border border-accent/20">
+                                    <p.icon className="w-6 h-6 text-accent" />
+                                </div>
+                                <div className="font-mono text-xs text-white/40 uppercase tracking-widest">Step {p.id}</div>
+                            </div>
+
+                            <h3 className="text-2xl font-heading font-bold text-white mb-4">
+                                {p.title.replace(/_/g, " ")}
+                            </h3>
+
+                            <p className="text-white/60 leading-relaxed font-light text-sm">
+                                {p.content}
+                            </p>
+                        </motion.div>
+                    ))}
+                </div>
+            </div>
+        </section>
+    )
+}
+
+function MethodDesktop() {
+    const containerRef = useRef<HTMLDivElement>(null)
     const { scrollY } = useScroll()
     const scrollVelocity = useVelocity(scrollY)
     const smoothVelocity = useSpring(scrollVelocity, { damping: 50, stiffness: 400 })
 
-    // Section progress for positioning
     const { scrollYProgress } = useScroll({
         target: containerRef,
         offset: ["start start", "end end"]
     })
 
-    // 1. Velocity-driven Rotation
-    // Map velocity to rotation: negative (up) -> 0, positive (down) -> 180
-    const isMobile = useMobile()
-
     const rocketRotation = useTransform(smoothVelocity, (latest) => {
-        if (isMobile) return 180 // Static down on mobile
-        if (Math.abs(latest) < 5) return 90 // Neutral/Side when idle? Or keep last? 
-        // Actually, just mapping direction is safer.
         return (latest < 0 ? 0 : 180) as number
     })
-    // Smooth the rotation so it snaps but not instantly jittery
     const smoothRotation = useSpring(rocketRotation, { stiffness: 200, damping: 30 })
 
-
-    // 2. Velocity-driven Boost Intensity
-    // Map absolute velocity to opacity/scale
     const boostOpacity = useTransform(smoothVelocity, [-1000, -50, 0, 50, 1000], [1, 0, 0, 0, 1])
     const boostScale = useTransform(smoothVelocity, [-1000, 0, 1000], [1.2, 0.8, 1.2])
 
-
-    // Rocket remains in sticky viewport, moving from 50vh to 80vh
     const rocketTop = useTransform(scrollYProgress, [0, 1], ["50vh", "80vh"])
     const rocketSpring = useSpring(rocketTop, { stiffness: 50, damping: 20, restDelta: 0.001 })
 
-    // Fill the document-based line as we scroll
     const fillHeight = useTransform(scrollYProgress, [0, 1], ["0%", "100%"])
 
     return (
@@ -142,33 +179,29 @@ export function Method() {
                             <Rocket className="w-6 h-6 text-accent fill-accent/20 -rotate-45 relative z-10" />
 
                             {/* ENHANCED THRUSTERS (Afterburner Fire Effect) - Driven by Velocity Opacity */}
-                            {/* ENHANCED THRUSTERS (Afterburner Fire Effect) - Driven by Velocity Opacity */}
-                            {/* Disabled on Mobile for performance */}
-                            {!isMobile && (
+                            <motion.div
+                                style={{ opacity: boostOpacity }}
+                                className="absolute top-[80%] left-1/2 -translate-x-1/2 pointer-events-none origin-top mix-blend-screen flex flex-col items-center"
+                            >
+
+                                {/* 1. Inner Core (White Hot) */}
+                                <div
+                                    className="w-2 bg-white rounded-full blur-[2px] z-20 h-2"
+                                    style={{ animation: 'flame-flicker 0.1s linear infinite' }}
+                                />
+
+                                {/* 2. Middle Flame (Yellow/Orange) */}
                                 <motion.div
-                                    style={{ opacity: boostOpacity }}
-                                    className="absolute top-[80%] left-1/2 -translate-x-1/2 pointer-events-none origin-top mix-blend-screen flex flex-col items-center"
-                                >
+                                    className="absolute top-2 w-4 bg-gradient-to-b from-yellow-300 to-orange-500 rounded-full blur-[4px] z-10 h-8"
+                                    style={{ animation: 'flame-flicker 0.15s linear infinite', scaleX: boostScale }}
+                                />
 
-                                    {/* 1. Inner Core (White Hot) */}
-                                    <div
-                                        className="w-2 bg-white rounded-full blur-[2px] z-20 h-2"
-                                        style={{ animation: 'flame-flicker 0.1s linear infinite' }}
-                                    />
-
-                                    {/* 2. Middle Flame (Yellow/Orange) */}
-                                    <motion.div
-                                        className="absolute top-2 w-4 bg-gradient-to-b from-yellow-300 to-orange-500 rounded-full blur-[4px] z-10 h-8"
-                                        style={{ animation: 'flame-flicker 0.15s linear infinite', scaleX: boostScale }}
-                                    />
-
-                                    {/* 3. Outer Plasma (Green Accent + Smoke) */}
-                                    <div
-                                        className="absolute top-4 w-8 bg-gradient-to-b from-accent to-transparent rounded-full blur-[8px] z-0 h-12 opacity-30"
-                                        style={{ animation: 'flame-flicker 0.2s linear infinite' }}
-                                    />
-                                </motion.div>
-                            )}
+                                {/* 3. Outer Plasma (Green Accent + Smoke) */}
+                                <div
+                                    className="absolute top-4 w-8 bg-gradient-to-b from-accent to-transparent rounded-full blur-[8px] z-0 h-12 opacity-30"
+                                    style={{ animation: 'flame-flicker 0.2s linear infinite' }}
+                                />
+                            </motion.div>
                         </motion.div>
 
                         {/* Scanning Line - Desktop Only */}
