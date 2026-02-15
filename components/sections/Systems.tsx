@@ -145,17 +145,19 @@ export function Systems() {
 }
 
 function Bar({ height, color, index }: { height: number, color: string, index: number }) {
-    // CSS-driven animation for zero main-thread overhead
-    // Randomize duration and delay slightly for organic feel
-    const duration = 1.5 + (index % 3) * 0.5 + Math.random() * 0.5;
-    const delay = index * 0.1;
+    // CSS-driven animation (Deterministic to fix hydration mismatch)
+    const duration = 1.5 + (index % 5) * 0.2;
+    const delay = (index % 10) * 0.1;
 
     return (
         <div
             className={`w-full rounded-sm ${color}`}
             style={{
                 height: `${height}%`,
-                animation: `equalizer ${duration}s ease-in-out infinite`,
+                animationName: "equalizer",
+                animationDuration: `${duration}s`,
+                animationTimingFunction: "ease-in-out",
+                animationIterationCount: "infinite",
                 animationDelay: `${delay}s`
             }}
         />
