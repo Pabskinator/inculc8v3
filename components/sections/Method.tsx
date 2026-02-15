@@ -1,7 +1,7 @@
 "use client"
 
 import { useRef, useState } from "react"
-import { motion, useScroll, useTransform, useSpring, useMotionValueEvent } from "framer-motion"
+import { motion, useScroll, useTransform, useSpring, useVelocity } from "framer-motion"
 import { Rocket, Search, Layout, Zap, Shield, Send, ArrowDown } from "lucide-react"
 import { ScrambleText } from "@/components/ui/ScrambleText"
 import { cn } from "@/lib/utils"
@@ -41,12 +41,13 @@ const protocols = [
 
 export function Method() {
     const containerRef = useRef<HTMLDivElement>(null)
-    const [rocketRotation, setRocketRotation] = useState(180)
-    const [isBoosting, setIsBoosting] = useState(false)
-    const boostTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+    // REMOVED: useState for rocketRotation and isBoosting (caused re-renders)
+    // REMOVED: boostTimeoutRef
 
-    // Global scroll for direction detection
+    // Global scroll for direction/velocity detection
     const { scrollY } = useScroll()
+    const scrollVelocity = useVelocity(scrollY)
+    const smoothVelocity = useSpring(scrollVelocity, { damping: 50, stiffness: 400 })
 
     // Section progress for positioning
     const { scrollYProgress } = useScroll({
@@ -54,34 +55,24 @@ export function Method() {
         offset: ["start start", "end end"]
     })
 
-    // Rocket Rotation & Thrust Logic
-    useMotionValueEvent(scrollY, "change", (latest) => {
-        const previous = scrollY.getPrevious() || 0
-
-        // 1. Rotation Direction
-        if (latest > previous) {
-            setRocketRotation(180) // Down (Descent) - Strictly vertical
-        } else if (latest < previous) {
-            setRocketRotation(0) // Up (Ascent) - Strictly vertical
-        }
-
-        // 2. Thrust Intensity (Boost when scrolling, but idle at start AND end)
-        const progress = scrollYProgress.get()
-        if (progress > 0.005 && progress < 0.995) {
-            setIsBoosting(true)
-            if (boostTimeoutRef.current) clearTimeout(boostTimeoutRef.current)
-
-            // After 150ms of no scroll events, consider it "Idle"
-            boostTimeoutRef.current = setTimeout(() => {
-                setIsBoosting(false)
-            }, 150)
-        } else {
-            setIsBoosting(false)
-        }
+    // 1. Velocity-driven Rotation
+    // Map velocity to rotation: negative (up) -> 0, positive (down) -> 180
+    const rocketRotation = useTransform(smoothVelocity, (latest) => {
+        if (Math.abs(latest) < 5) return 90 // Neutral/Side when idle? Or keep last? 
+        // Actually, just mapping direction is safer.
+        return latest < 0 ? 0 : 180
     })
+    // Smooth the rotation so it snaps but not instantly jittery
+    const smoothRotation = useSpring(rocketRotation, { stiffness: 200, damping: 30 })
+
+
+    // 2. Velocity-driven Boost Intensity
+    // Map absolute velocity to opacity/scale
+    const boostOpacity = useTransform(smoothVelocity, [-1000, -50, 0, 50, 1000], [1, 0, 0, 0, 1])
+    const boostScale = useTransform(smoothVelocity, [-1000, 0, 1000], [1.2, 0.8, 1.2])
+
 
     // Rocket remains in sticky viewport, moving from 50vh to 80vh
-    // Lowered start point further as requested (50vh is center screen)
     const rocketTop = useTransform(scrollYProgress, [0, 1], ["50vh", "80vh"])
     const rocketSpring = useSpring(rocketTop, { stiffness: 50, damping: 20, restDelta: 0.001 })
 
@@ -106,9 +97,6 @@ export function Method() {
                     <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full border border-accent bg-black" />
 
                     {/* END MARKER - Destination Planet */}
-                    {/* Aligned so the Planet Center matches exactly perfectly with bottom-0 (End of Line) */}
-                    {/* Label is pushed below so it doesn't shift the center */}
-                    {/* FIXED: Removed 'relative' class so 'absolute bottom-0' works correctly */}
                     <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-16 h-16 rounded-full border border-white/10 bg-black/50 backdrop-blur-md flex items-center justify-center shadow-[0_0_30px_rgba(34,197,94,0.1)] overflow-visible">
                         <div className="absolute inset-0 bg-gradient-to-br from-accent/20 to-transparent rounded-full" />
                         <div className="w-8 h-8 rounded-full border border-accent/40 bg-accent/10 flex items-center justify-center animate-pulse">
@@ -141,24 +129,26 @@ export function Method() {
                         className="absolute -translate-x-1/2 -translate-y-1/2 z-20"
                         style={{ top: rocketSpring, left: "50%" }}
                     >
-                        {/* Rocket Container - Now Animates Rotation */}
+                        {/* Rocket Container - Now Animates Rotation via Style */}
                         <motion.div
-                            animate={{ rotate: rocketRotation }}
-                            transition={{ duration: 0.4, ease: "backOut" }}
+                            style={{ rotate: smoothRotation }}
                             className="relative p-3 rounded-full border border-white/10 bg-black/80 backdrop-blur-md shadow-[0_0_30px_rgba(34,197,94,0.3)]"
                         >
                             {/* Static -45deg rotation to correct icon orientation */}
                             <Rocket className="w-6 h-6 text-accent fill-accent/20 -rotate-45 relative z-10" />
 
-                            {/* ENHANCED THRUSTERS (Afterburner Fire Effect) */}
-                            <div className="absolute top-[80%] left-1/2 -translate-x-1/2 pointer-events-none origin-top mix-blend-screen flex flex-col items-center">
+                            {/* ENHANCED THRUSTERS (Afterburner Fire Effect) - Driven by Velocity Opacity */}
+                            <motion.div
+                                style={{ opacity: boostOpacity }}
+                                className="absolute top-[80%] left-1/2 -translate-x-1/2 pointer-events-none origin-top mix-blend-screen flex flex-col items-center"
+                            >
 
                                 {/* 1. Inner Core (White Hot) */}
                                 <motion.div
                                     className="w-2 bg-white rounded-full blur-[2px] z-20"
                                     animate={{
-                                        height: isBoosting ? [24, 32, 24] : [8, 12, 8], // Boosting vs Idle
-                                        opacity: isBoosting ? [0.9, 1, 0.9] : [0.5, 0.6, 0.5]
+                                        height: [8, 24, 8],
+                                        opacity: [0.8, 1, 0.8]
                                     }}
                                     transition={{ duration: 0.1, repeat: Infinity, ease: "linear" }}
                                 />
@@ -166,10 +156,9 @@ export function Method() {
                                 {/* 2. Middle Flame (Yellow/Orange) */}
                                 <motion.div
                                     className="absolute top-2 w-4 bg-gradient-to-b from-yellow-300 to-orange-500 rounded-full blur-[4px] z-10"
+                                    style={{ scaleX: boostScale }}
                                     animate={{
-                                        height: isBoosting ? [64, 80, 50] : [20, 30, 20],
-                                        scaleX: isBoosting ? [1, 0.9, 1.1] : [0.8, 0.9, 0.8],
-                                        opacity: isBoosting ? 1 : 0.6
+                                        height: [20, 60, 30],
                                     }}
                                     transition={{ duration: 0.15, repeat: Infinity, ease: "linear" }}
                                 />
@@ -178,22 +167,12 @@ export function Method() {
                                 <motion.div
                                     className="absolute top-4 w-8 bg-gradient-to-b from-accent to-transparent rounded-full blur-[8px] z-0"
                                     animate={{
-                                        height: isBoosting ? [96, 120, 90] : [30, 40, 30],
-                                        opacity: isBoosting ? [0.6, 0.4, 0.6] : [0.2, 0.1, 0.2]
+                                        height: [30, 90, 40],
+                                        opacity: [0.3, 0.6, 0.3]
                                     }}
                                     transition={{ duration: 0.2, repeat: Infinity, ease: "linear" }}
                                 />
-
-                                {/* 4. Mach Diamonds (Shockwaves) - Only visible when boosting */}
-                                <motion.div
-                                    animate={{ opacity: isBoosting ? 1 : 0 }}
-                                    className="absolute top-8 w-2 h-2 bg-white/50 rounded-full blur-[1px] animate-ping"
-                                />
-                                <motion.div
-                                    animate={{ opacity: isBoosting ? 1 : 0 }}
-                                    className="absolute top-16 w-1 h-1 bg-white/30 rounded-full blur-[1px] animate-ping delay-75"
-                                />
-                            </div>
+                            </motion.div>
                         </motion.div>
 
                         {/* Scanning Line - Desktop Only */}

@@ -35,7 +35,9 @@ export function ScrambleText({
         timeoutId = setTimeout(() => {
             let iteration = 0
 
-            const animate = () => {
+            // Optimization: Use setInterval instead of RAF to throttle updates
+            // Running at ~20fps (50ms) instead of 60fps (16ms)
+            const intervalId = setInterval(() => {
                 const result = text
                     .split("")
                     .map((char, index) => {
@@ -49,20 +51,22 @@ export function ScrambleText({
                 setDisplayText(result)
 
                 if (iteration < text.length) {
-                    iteration += 1 / (revealSpeed / scrambleSpeed) // Control speed of reveal vs scramble
-                    frameId = requestAnimationFrame(animate)
+                    iteration += 1 / (revealSpeed / scrambleSpeed)
                 } else {
                     setDisplayText(text)
                     setIsComplete(true)
+                    clearInterval(intervalId)
                 }
-            }
+            }, 50) // 50ms throttle
 
-            frameId = requestAnimationFrame(animate)
+            // Store interval id to clear if unmounted
+            frameId = Number(intervalId)
+
         }, delay)
 
         return () => {
             clearTimeout(timeoutId)
-            cancelAnimationFrame(frameId)
+            clearInterval(frameId)
         }
     }, [isInView, text, delay, revealSpeed, scrambleSpeed])
 
