@@ -69,8 +69,6 @@ body {
   /* NUCLEAR: Disable all forced hardware acceleration to save memory */
   * {
     will-change: auto !important;
-    transform: none !important;
-    /* Optional: might break layout, use with caution. Let's stick to will-change first. */
   }
 }
 

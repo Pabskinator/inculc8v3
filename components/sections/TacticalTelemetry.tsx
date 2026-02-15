@@ -9,16 +9,98 @@ import { useMobile } from "@/hooks/use-mobile"
 
 export function TacticalTelemetry() {
     const containerRef = useRef<HTMLDivElement>(null)
+    const isMobile = useMobile()
+
+    if (isMobile) {
+        return (
+            <section className="relative min-h-screen w-full bg-[#050505] overflow-hidden flex items-center py-20 border-t border-white/5">
+                <CyberGrid />
+                <div className="container mx-auto px-4 md:px-6 relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                    {/* MOBILE LEFT COLUMN - Simple Fade In */}
+                    <motion.div
+                        initial={{ opacity: 0, y: 30 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.6 }}
+                        className="flex flex-col space-y-8"
+                    >
+                        <div className="flex items-center gap-2">
+                            <div className="w-2 h-2 bg-[#00FF41] animate-pulse" />
+                            <span className="text-[#00FF41] font-mono text-xs tracking-widest uppercase">
+                                Operational_Asset_Class
+                            </span>
+                        </div>
+
+                        <div className="flex flex-col">
+                            <h2 className="text-5xl md:text-7xl lg:text-8xl font-heading font-bold tracking-tighter text-white leading-[0.9]">
+                                TACTICAL
+                            </h2>
+                            <div className="text-5xl md:text-7xl lg:text-8xl font-heading font-bold tracking-tighter h-[1.1em] md:h-[0.9em] flex items-center overflow-hidden">
+                                <ScrambleText
+                                    text="TELEMETRY"
+                                    className="text-transparent bg-clip-text bg-gradient-to-r from-[#00FF41] via-[#CCFF00] to-[#00FF41] leading-[0.9]"
+                                    scrambleSpeed={25}
+                                    revealSpeed={100}
+                                    delay={200}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="flex items-start gap-4 border-l-2 border-[#00FF41]/50 pl-6 max-w-md backdrop-blur-sm bg-black/20 py-4 pr-4 rounded-r-md">
+                            <p className="text-primary/80 font-light text-sm leading-relaxed">
+                                WE DON'T JUST BUILD INTERFACES. <br />
+                                WE DESIGN WEAPONIZED CONVERSION ENGINES.
+                            </p>
+                        </div>
+                    </motion.div>
+
+                    {/* MOBILE RIGHT COLUMN - Simple Fade In Staggered */}
+                    <div className="flex flex-col gap-6">
+                        <motion.div
+                            initial={{ opacity: 0, x: 20 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.5, delay: 0.1 }}
+                        >
+                            <Card
+                                id="01"
+                                icon={<Cpu className="text-[#00FF41]" />}
+                                title="AUTONOMOUS WEB SYSTEMS"
+                                description="Zero-latency digital flagships engineered for total sector dominance. High-fidelity interfaces with integrated AI logic."
+                                tags={["SECTOR_ALPHA", "PREDICTIVE_UX", "FORCE_MULTIPLIER"]}
+                            />
+                        </motion.div>
+                        <motion.div
+                            initial={{ opacity: 0, x: 20 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.5, delay: 0.2 }}
+                        >
+                            <Card
+                                id="02"
+                                icon={<Network className="text-[#00FF41]" />}
+                                title="OPERATIONAL AUTOMATION"
+                                description="Kill operational friction. We architect self-healing telemetry pipelines that route mission-critical data in real-time."
+                                tags={["NODE_SYNC", "ASYNC_PROTOCOL", "ZERO_FRICTION"]}
+                            />
+                        </motion.div>
+                    </div>
+                </div>
+            </section>
+        )
+    }
+
+    // DESKTOP: Parallax Effects Enabled
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     const { scrollYProgress } = useScroll({
         target: containerRef,
         offset: ["start end", "end start"]
     })
 
-    const isMobile = useMobile()
-
-    // Parallax effects for content (DISABLED ON MOBILE)
-    const yText = useTransform(scrollYProgress, [0, 1], isMobile ? [0, 0] : [50, -50])
-    const yCards = useTransform(scrollYProgress, [0, 1], isMobile ? [0, 0] : [150, -150])
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const yText = useTransform(scrollYProgress, [0, 1], [50, -50])
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const yCards = useTransform(scrollYProgress, [0, 1], [150, -150])
 
     return (
         <section ref={containerRef} className="relative min-h-screen w-full bg-[#050505] overflow-hidden flex items-center py-20 border-t border-white/5">
@@ -28,7 +110,7 @@ export function TacticalTelemetry() {
             <div className="container mx-auto px-4 md:px-6 relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
 
                 {/* Left Column: Text */}
-                <motion.div style={{ y: yText }} className={`flex flex-col space-y-8 ${isMobile ? '' : 'will-change-transform'}`}>
+                <motion.div style={{ y: yText }} className="flex flex-col space-y-8 will-change-transform">
                     <div className="flex items-center gap-2">
                         <div className="w-2 h-2 bg-[#00FF41] animate-pulse" />
                         <span className="text-[#00FF41] font-mono text-xs tracking-widest uppercase">
@@ -60,7 +142,7 @@ export function TacticalTelemetry() {
                 </motion.div>
 
                 {/* Right Column: Cards */}
-                <motion.div style={{ y: yCards }} className={`flex flex-col gap-6 ${isMobile ? '' : 'will-change-transform'}`}>
+                <motion.div style={{ y: yCards }} className="flex flex-col gap-6 will-change-transform">
                     <Card
                         id="01"
                         icon={<Cpu className="text-[#00FF41]" />}

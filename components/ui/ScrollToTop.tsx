@@ -11,18 +11,28 @@ export function ScrollToTop() {
     const [isHovered, setIsHovered] = useState(false)
     const lenis = useLenis()
 
-    // Toggle visibility based on scroll position - optimized
+    // Toggle visibility based on scroll position - optimized with throttling
     useEffect(() => {
+        let timeoutId: NodeJS.Timeout | null = null
+
         const toggleVisibility = () => {
-            if (window.scrollY > 500) {
-                setIsVisible(true)
-            } else {
-                setIsVisible(false)
-            }
+            if (timeoutId) return
+
+            timeoutId = setTimeout(() => {
+                if (window.scrollY > 500) {
+                    setIsVisible(true)
+                } else {
+                    setIsVisible(false)
+                }
+                timeoutId = null
+            }, 100)
         }
 
         window.addEventListener("scroll", toggleVisibility, { passive: true })
-        return () => window.removeEventListener("scroll", toggleVisibility)
+        return () => {
+            window.removeEventListener("scroll", toggleVisibility)
+            if (timeoutId) clearTimeout(timeoutId)
+        }
     }, [])
 
     const scrollToTop = (e: React.MouseEvent) => {

@@ -5,22 +5,50 @@ import { useMobile } from "@/hooks/use-mobile"
 
 export function CyberGrid({ scrollYProgress }: { scrollYProgress?: MotionValue<number> }) {
     const isMobile = useMobile()
+
+    if (isMobile) {
+        return <CyberGridMobile />
+    }
+
+    return <CyberGridDesktop scrollYProgress={scrollYProgress} />
+}
+
+function CyberGridMobile() {
+    return (
+        <div className="absolute inset-0 overflow-hidden pointer-events-none z-0 bg-[#050505]">
+            {/* Static Background for Mobile - NO HOOKS, NO TRANSFORMS */}
+            <div
+                className="absolute inset-0 opacity-20"
+                style={{
+                    backgroundImage: `
+                        linear-gradient(to right, rgba(0, 255, 65, 0.1) 1px, transparent 1px),
+                        linear-gradient(to bottom, rgba(0, 255, 65, 0.1) 1px, transparent 1px)
+                    `,
+                    backgroundSize: '40px 40px',
+                }}
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-[#050505]" />
+        </div>
+    )
+}
+
+function CyberGridDesktop({ scrollYProgress }: { scrollYProgress?: MotionValue<number> }) {
     // Default motion value if none provided
     const defaultMotion = useMotionValue(0)
     const scroll = scrollYProgress || defaultMotion
 
     // OPTIMIZED PERF: Removed dynamic rotateX to prevent constant re-rasterization
-    // 1. Grid moves significantly (DISABLED ON MOBILE for static bg)
-    const gridY = useTransform(scroll, [0, 1], isMobile ? ["0%", "0%"] : ["-20%", "20%"])
+    // 1. Grid moves significantly
+    const gridY = useTransform(scroll, [0, 1], ["-20%", "20%"])
 
     // 2. Scale "zooms out" reveals the grid (Cheaper than perspective change)
-    const gridScale = useTransform(scroll, [0, 1], isMobile ? [1, 1] : [1.5, 1])
+    const gridScale = useTransform(scroll, [0, 1], [1.5, 1])
 
     // 3. Background Opacity for fade in/out
-    const gridOpacity = useTransform(scroll, [0, 0.2, 0.8, 1], isMobile ? [1, 1, 1, 1] : [0, 1, 1, 0])
+    const gridOpacity = useTransform(scroll, [0, 0.2, 0.8, 1], [0, 1, 1, 0])
 
     // 4. Floating ceiling moves in OPPOSITE direction for depth
-    const ceilingY = useTransform(scroll, [0, 1], isMobile ? ["0%", "0%"] : ["0%", "-40%"])
+    const ceilingY = useTransform(scroll, [0, 1], ["0%", "-40%"])
 
     return (
         <div className="absolute inset-0 overflow-hidden pointer-events-none z-0 bg-[#050505]">
@@ -64,14 +92,12 @@ export function CyberGrid({ scrollYProgress }: { scrollYProgress?: MotionValue<n
                 style={{ animation: 'scanline 3s linear infinite' }}
             />
 
-            {/* 4. Ambient "Searchlight" Beam - DISABLED ON MOBILE */}
-            {!isMobile && (
-                <motion.div
-                    animate={{ rotate: [0, 360] }}
-                    transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150vmax] h-[150vmax] bg-[conic-gradient(from_0deg,transparent_0deg,rgba(0,255,65,0.05)_20deg,transparent_40deg)] opacity-40 pointer-events-none mix-blend-screen"
-                />
-            )}
+            {/* 4. Ambient "Searchlight" Beam */}
+            <motion.div
+                animate={{ rotate: [0, 360] }}
+                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150vmax] h-[150vmax] bg-[conic-gradient(from_0deg,transparent_0deg,rgba(0,255,65,0.05)_20deg,transparent_40deg)] opacity-40 pointer-events-none mix-blend-screen"
+            />
 
             {/* 5. Vignette & Fog for depth */}
             <div className="absolute inset-0 bg-radial-gradient(circle at center, transparent 0%, #050505 90%) pointer-events-none" />
