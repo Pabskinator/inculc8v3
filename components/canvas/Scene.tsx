@@ -51,9 +51,20 @@ export function Scene({ onNodeHover }: { onNodeHover?: (node: NodeData) => void 
         return { nodes: temp, nodeRefs: refs }
     }, [])
 
+    const [isMobile, setIsMobile] = useState(false)
+
+    useEffect(() => {
+        const checkMobile = () => {
+            setIsMobile(window.innerWidth < 768)
+        }
+        checkMobile()
+        window.addEventListener("resize", checkMobile)
+        return () => window.removeEventListener("resize", checkMobile)
+    }, [])
+
     return (
         <div className="absolute inset-0 z-0">
-            <Canvas dpr={[1, 1.5]} performance={{ min: 0.5 }}>
+            <Canvas dpr={isMobile ? [1, 1] : [1, 1.5]} performance={{ min: 0.5 }}>
                 <PerspectiveCamera makeDefault position={[0, 0, 15]} fov={50} />
 
                 <color attach="background" args={["#050505"]} />
@@ -74,10 +85,12 @@ export function Scene({ onNodeHover }: { onNodeHover?: (node: NodeData) => void 
                     }}
                 />
 
-                <EffectComposer>
-                    <Bloom luminanceThreshold={0.5} luminanceSmoothing={0.9} height={300} intensity={0.5} />
-                    <Vignette eskil={false} offset={0.1} darkness={1.1} />
-                </EffectComposer>
+                {!isMobile && (
+                    <EffectComposer>
+                        <Bloom luminanceThreshold={0.5} luminanceSmoothing={0.9} height={300} intensity={0.5} />
+                        <Vignette eskil={false} offset={0.1} darkness={1.1} />
+                    </EffectComposer>
+                )}
             </Canvas>
         </div>
     )
