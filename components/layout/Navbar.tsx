@@ -15,25 +15,18 @@ const navItems = [
     { name: "SIGNAL", href: "#signal" },
 ]
 
-const [hidden, setHidden] = useState(false)
-const isMobile = useMobile()
+export function Navbar() {
+    const isMobile = useMobile()
 
-// Only use scroll hooks on Desktop
-// We can't conditionally call hooks, so we must always call them, 
-// OR we return early if we were passing them as props.
-// BUT since we can't easily split Navbar without deeper refactor, 
-// we will accept the overhead here BUT disable the heavy setState logic.
-// Actually, splitting is cleaner.
+    if (isMobile) {
+        return (
+            <header className="fixed top-0 left-0 right-0 z-50 flex justify-center py-6 pointer-events-none">
+                <NavbarContent isMobile={true} />
+            </header>
+        )
+    }
 
-if (isMobile) {
-    return (
-        <header className="fixed top-0 left-0 right-0 z-50 flex justify-center py-6 pointer-events-none">
-            <NavbarContent isMobile={true} />
-        </header>
-    )
-}
-
-return <NavbarDesktop />
+    return <NavbarDesktop />
 }
 
 function NavbarDesktop() {
