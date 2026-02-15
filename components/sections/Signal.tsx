@@ -108,15 +108,13 @@ export function Signal() {
                             {/* Decorative visualizer */}
                             <div className="mt-8 flex items-end gap-1 h-8 opacity-50">
                                 {[...Array(20)].map((_, i) => (
-                                    <motion.div
+                                    <div
                                         key={i}
-                                        className="w-1 bg-accent"
-                                        animate={{ height: ["20%", "100%", "20%"] }}
-                                        transition={{
-                                            duration: 1,
-                                            repeat: Infinity,
-                                            delay: i * 0.05,
-                                            ease: "easeInOut"
+                                        className="w-1 bg-accent/50"
+                                        style={{
+                                            height: '20%',
+                                            animation: `equalizer 1s ease-in-out infinite`,
+                                            animationDelay: `${i * 0.05}s`
                                         }}
                                     />
                                 ))}

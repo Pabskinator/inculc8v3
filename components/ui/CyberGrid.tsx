@@ -59,10 +59,9 @@ export function CyberGrid({ scrollYProgress }: { scrollYProgress?: MotionValue<n
             </motion.div>
 
             {/* 3. Scanning Laser Line */}
-            <motion.div
-                animate={{ top: ["0%", "100%"], opacity: [0, 1, 0] }}
-                transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+            <div
                 className="absolute left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#00FF41] to-transparent shadow-[0_0_20px_rgba(0,255,65,0.5)] z-10"
+                style={{ animation: 'scanline 3s linear infinite' }}
             />
 
             {/* 4. Ambient "Searchlight" Beam - DISABLED ON MOBILE */}

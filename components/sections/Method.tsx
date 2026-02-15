@@ -145,41 +145,31 @@ export function Method() {
                             {/* ENHANCED THRUSTERS (Afterburner Fire Effect) - Driven by Velocity Opacity */}
                             {/* Disabled on Mobile for performance */}
                             {!isMobile && (
-                                <motion.div
-                                    style={{ opacity: boostOpacity }}
+                                <div
+                                    style={{ opacity: boostOpacity.get() }} // Use get() or keep motion value if it updates infrequently enough? Actually, opacity is velocity driven, that's fine. 
+                                    // Wait, boostOpacity is a scroll velocity MotionValue. That's layout-safe (transform/opacity). 
+                                    // The INNER LOOPS are the problem.
                                     className="absolute top-[80%] left-1/2 -translate-x-1/2 pointer-events-none origin-top mix-blend-screen flex flex-col items-center"
                                 >
 
                                     {/* 1. Inner Core (White Hot) */}
-                                    <motion.div
-                                        className="w-2 bg-white rounded-full blur-[2px] z-20"
-                                        animate={{
-                                            height: [8, 24, 8],
-                                            opacity: [0.8, 1, 0.8]
-                                        }}
-                                        transition={{ duration: 0.1, repeat: Infinity, ease: "linear" }}
+                                    <div
+                                        className="w-2 bg-white rounded-full blur-[2px] z-20 h-2"
+                                        style={{ animation: 'flame-flicker 0.1s linear infinite' }}
                                     />
 
                                     {/* 2. Middle Flame (Yellow/Orange) */}
-                                    <motion.div
-                                        className="absolute top-2 w-4 bg-gradient-to-b from-yellow-300 to-orange-500 rounded-full blur-[4px] z-10"
-                                        style={{ scaleX: boostScale }}
-                                        animate={{
-                                            height: [20, 60, 30],
-                                        }}
-                                        transition={{ duration: 0.15, repeat: Infinity, ease: "linear" }}
+                                    <div
+                                        className="absolute top-2 w-4 bg-gradient-to-b from-yellow-300 to-orange-500 rounded-full blur-[4px] z-10 h-8"
+                                        style={{ animation: 'flame-flicker 0.15s linear infinite', scaleX: boostScale.get() }}
                                     />
 
                                     {/* 3. Outer Plasma (Green Accent + Smoke) */}
-                                    <motion.div
-                                        className="absolute top-4 w-8 bg-gradient-to-b from-accent to-transparent rounded-full blur-[8px] z-0"
-                                        animate={{
-                                            height: [30, 90, 40],
-                                            opacity: [0.3, 0.6, 0.3]
-                                        }}
-                                        transition={{ duration: 0.2, repeat: Infinity, ease: "linear" }}
+                                    <div
+                                        className="absolute top-4 w-8 bg-gradient-to-b from-accent to-transparent rounded-full blur-[8px] z-0 h-12 opacity-30"
+                                        style={{ animation: 'flame-flicker 0.2s linear infinite' }}
                                     />
-                                </motion.div>
+                                </div>
                             )}
                         </motion.div>
 
