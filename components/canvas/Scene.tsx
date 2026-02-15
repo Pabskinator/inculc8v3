@@ -19,8 +19,8 @@ export type NodeData = {
 
 export function Scene({ onNodeHover }: { onNodeHover?: (node: NodeData) => void }) {
     const { setActiveNode } = useInteraction()
-    const containerRef = useRef(null)
-    const isInView = useInView(containerRef, { margin: "100px" }) // Pause when 100px out of view
+    // const containerRef = useRef(null) // Removed
+    // const isInView = useInView(containerRef, { margin: "100px" }) // Pause when 100px out of view // Removed
 
     // Generate nodes and refs in the same memo so they are stable
     const { nodes, nodeRefs } = useMemo(() => {
@@ -61,9 +61,8 @@ export function Scene({ onNodeHover }: { onNodeHover?: (node: NodeData) => void 
     useEffect(() => {
         setMounted(true)
         const checkMobile = () => {
-            // A more aggressive check for "mobile" to force fallback
-            // Includes small screens OR touch devices to be safe
-            setIsMobile(window.innerWidth < 768 || ('ontouchstart' in window && window.innerWidth < 1024))
+            // Simplified check: Just width. Touch detection on desktop monitors shouldn't downgrade to 2D.
+            setIsMobile(window.innerWidth < 768)
         }
         checkMobile()
         window.addEventListener("resize", checkMobile)
@@ -79,12 +78,12 @@ export function Scene({ onNodeHover }: { onNodeHover?: (node: NodeData) => void 
     }
 
     return (
-        <div ref={containerRef} className="absolute inset-0 z-0">
+        <div className="absolute inset-0 z-0">
             {/* Pausing Logic: frameloop="never" when off-screen to stop RAF loop */}
             <Canvas
                 dpr={[1, 1.5]}
                 performance={{ min: 0.5 }}
-                frameloop={isInView ? "always" : "never"}
+                frameloop="always"
             >
                 <PerspectiveCamera makeDefault position={[0, 0, 15]} fov={50} />
 
@@ -106,7 +105,7 @@ export function Scene({ onNodeHover }: { onNodeHover?: (node: NodeData) => void 
                     }}
                 />
 
-                <EffectComposer enabled={isInView}>
+                <EffectComposer>
                     <Bloom luminanceThreshold={0.5} luminanceSmoothing={0.9} height={300} intensity={0.5} />
                     <Vignette eskil={false} offset={0.1} darkness={1.1} />
                 </EffectComposer>
