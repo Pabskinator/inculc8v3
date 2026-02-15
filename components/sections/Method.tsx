@@ -5,6 +5,7 @@ import { motion, useScroll, useTransform, useSpring, useVelocity } from "framer-
 import { Rocket, Search, Layout, Zap, Shield, Send, ArrowDown } from "lucide-react"
 import { ScrambleText } from "@/components/ui/ScrambleText"
 import { cn } from "@/lib/utils"
+import { useMobile } from "@/hooks/use-mobile"
 
 const protocols = [
     {
@@ -57,7 +58,10 @@ export function Method() {
 
     // 1. Velocity-driven Rotation
     // Map velocity to rotation: negative (up) -> 0, positive (down) -> 180
+    const isMobile = useMobile()
+
     const rocketRotation = useTransform(smoothVelocity, (latest) => {
+        if (isMobile) return 180 // Static down on mobile
         if (Math.abs(latest) < 5) return 90 // Neutral/Side when idle? Or keep last? 
         // Actually, just mapping direction is safer.
         return (latest < 0 ? 0 : 180) as number
@@ -138,41 +142,45 @@ export function Method() {
                             <Rocket className="w-6 h-6 text-accent fill-accent/20 -rotate-45 relative z-10" />
 
                             {/* ENHANCED THRUSTERS (Afterburner Fire Effect) - Driven by Velocity Opacity */}
-                            <motion.div
-                                style={{ opacity: boostOpacity }}
-                                className="absolute top-[80%] left-1/2 -translate-x-1/2 pointer-events-none origin-top mix-blend-screen flex flex-col items-center"
-                            >
-
-                                {/* 1. Inner Core (White Hot) */}
+                            {/* ENHANCED THRUSTERS (Afterburner Fire Effect) - Driven by Velocity Opacity */}
+                            {/* Disabled on Mobile for performance */}
+                            {!isMobile && (
                                 <motion.div
-                                    className="w-2 bg-white rounded-full blur-[2px] z-20"
-                                    animate={{
-                                        height: [8, 24, 8],
-                                        opacity: [0.8, 1, 0.8]
-                                    }}
-                                    transition={{ duration: 0.1, repeat: Infinity, ease: "linear" }}
-                                />
+                                    style={{ opacity: boostOpacity }}
+                                    className="absolute top-[80%] left-1/2 -translate-x-1/2 pointer-events-none origin-top mix-blend-screen flex flex-col items-center"
+                                >
 
-                                {/* 2. Middle Flame (Yellow/Orange) */}
-                                <motion.div
-                                    className="absolute top-2 w-4 bg-gradient-to-b from-yellow-300 to-orange-500 rounded-full blur-[4px] z-10"
-                                    style={{ scaleX: boostScale }}
-                                    animate={{
-                                        height: [20, 60, 30],
-                                    }}
-                                    transition={{ duration: 0.15, repeat: Infinity, ease: "linear" }}
-                                />
+                                    {/* 1. Inner Core (White Hot) */}
+                                    <motion.div
+                                        className="w-2 bg-white rounded-full blur-[2px] z-20"
+                                        animate={{
+                                            height: [8, 24, 8],
+                                            opacity: [0.8, 1, 0.8]
+                                        }}
+                                        transition={{ duration: 0.1, repeat: Infinity, ease: "linear" }}
+                                    />
 
-                                {/* 3. Outer Plasma (Green Accent + Smoke) */}
-                                <motion.div
-                                    className="absolute top-4 w-8 bg-gradient-to-b from-accent to-transparent rounded-full blur-[8px] z-0"
-                                    animate={{
-                                        height: [30, 90, 40],
-                                        opacity: [0.3, 0.6, 0.3]
-                                    }}
-                                    transition={{ duration: 0.2, repeat: Infinity, ease: "linear" }}
-                                />
-                            </motion.div>
+                                    {/* 2. Middle Flame (Yellow/Orange) */}
+                                    <motion.div
+                                        className="absolute top-2 w-4 bg-gradient-to-b from-yellow-300 to-orange-500 rounded-full blur-[4px] z-10"
+                                        style={{ scaleX: boostScale }}
+                                        animate={{
+                                            height: [20, 60, 30],
+                                        }}
+                                        transition={{ duration: 0.15, repeat: Infinity, ease: "linear" }}
+                                    />
+
+                                    {/* 3. Outer Plasma (Green Accent + Smoke) */}
+                                    <motion.div
+                                        className="absolute top-4 w-8 bg-gradient-to-b from-accent to-transparent rounded-full blur-[8px] z-0"
+                                        animate={{
+                                            height: [30, 90, 40],
+                                            opacity: [0.3, 0.6, 0.3]
+                                        }}
+                                        transition={{ duration: 0.2, repeat: Infinity, ease: "linear" }}
+                                    />
+                                </motion.div>
+                            )}
                         </motion.div>
 
                         {/* Scanning Line - Desktop Only */}

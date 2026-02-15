@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef } from "react"
 import { motion, useInView } from "framer-motion"
+import { useMobile } from "@/hooks/use-mobile"
 
 const CYPHER_CHARS = "ABCDEF0123456789_!@#$%"
 
@@ -23,9 +24,18 @@ export function ScrambleText({
     const [displayText, setDisplayText] = useState(text.split("").map(() => "_").join(""))
     const [isComplete, setIsComplete] = useState(false)
     const ref = useRef<HTMLSpanElement>(null)
+    const ref = useRef<HTMLSpanElement>(null)
     const isInView = useInView(ref, { once: true, margin: "-100px" })
+    const isMobile = useMobile()
 
     useEffect(() => {
+        // Optimization: On mobile/tablet, skip animation entirely
+        if (isMobile) {
+            setDisplayText(text)
+            setIsComplete(true)
+            return
+        }
+
         if (!isInView) return
 
         let frameId: number
@@ -68,7 +78,7 @@ export function ScrambleText({
             clearTimeout(timeoutId)
             clearInterval(frameId)
         }
-    }, [isInView, text, delay, revealSpeed, scrambleSpeed])
+    }, [isInView, text, delay, revealSpeed, scrambleSpeed, isMobile])
 
     return (
         <span ref={ref} className={`${className} inline-block`}>
