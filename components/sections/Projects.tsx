@@ -65,10 +65,17 @@ export function Projects() {
                         return (
                             <motion.div
                                 key={i}
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true, margin: "-50px" }}
                                 onHoverStart={() => !isMobile && setActiveIndex(i)}
                                 onClick={() => setActiveIndex(i)}
                                 layout={!isMobile}
-                                transition={{ type: "spring", stiffness: 200, damping: 20 }}
+                                transition={{
+                                    layout: { type: "spring", stiffness: 200, damping: 20 },
+                                    opacity: { duration: 0.5, delay: i * 0.1 },
+                                    y: { duration: 0.5, delay: i * 0.1 }
+                                }}
                                 className={`relative rounded-3xl overflow-hidden cursor-pointer border border-white/10 transition-colors duration-500
                                     ${isActive ? 'lg:flex-[3] flex-[3]' : 'lg:flex-[1] flex-[1]'}
                                     h-[400px] lg:h-auto min-h-[100px]
