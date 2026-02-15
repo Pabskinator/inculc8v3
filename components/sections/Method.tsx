@@ -145,10 +145,8 @@ export function Method() {
                             {/* ENHANCED THRUSTERS (Afterburner Fire Effect) - Driven by Velocity Opacity */}
                             {/* Disabled on Mobile for performance */}
                             {!isMobile && (
-                                <div
-                                    style={{ opacity: boostOpacity.get() }} // Use get() or keep motion value if it updates infrequently enough? Actually, opacity is velocity driven, that's fine. 
-                                    // Wait, boostOpacity is a scroll velocity MotionValue. That's layout-safe (transform/opacity). 
-                                    // The INNER LOOPS are the problem.
+                                <motion.div
+                                    style={{ opacity: boostOpacity }}
                                     className="absolute top-[80%] left-1/2 -translate-x-1/2 pointer-events-none origin-top mix-blend-screen flex flex-col items-center"
                                 >
 
@@ -159,9 +157,9 @@ export function Method() {
                                     />
 
                                     {/* 2. Middle Flame (Yellow/Orange) */}
-                                    <div
+                                    <motion.div
                                         className="absolute top-2 w-4 bg-gradient-to-b from-yellow-300 to-orange-500 rounded-full blur-[4px] z-10 h-8"
-                                        style={{ animation: 'flame-flicker 0.15s linear infinite', scaleX: boostScale.get() }}
+                                        style={{ animation: 'flame-flicker 0.15s linear infinite', scaleX: boostScale }}
                                     />
 
                                     {/* 3. Outer Plasma (Green Accent + Smoke) */}
@@ -169,7 +167,7 @@ export function Method() {
                                         className="absolute top-4 w-8 bg-gradient-to-b from-accent to-transparent rounded-full blur-[8px] z-0 h-12 opacity-30"
                                         style={{ animation: 'flame-flicker 0.2s linear infinite' }}
                                     />
-                                </div>
+                                </motion.div>
                             )}
                         </motion.div>
 
