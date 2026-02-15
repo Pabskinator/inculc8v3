@@ -65,6 +65,13 @@ body {
     background-color: rgba(5, 5, 5, 0.95) !important;
     /* High opacity fallback */
   }
+
+  /* NUCLEAR: Disable all forced hardware acceleration to save memory */
+  * {
+    will-change: auto !important;
+    transform: none !important;
+    /* Optional: might break layout, use with caution. Let's stick to will-change first. */
+  }
 }
 
 @keyframes equalizer {

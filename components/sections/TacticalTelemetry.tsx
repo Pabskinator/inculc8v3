@@ -28,7 +28,7 @@ export function TacticalTelemetry() {
             <div className="container mx-auto px-4 md:px-6 relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
 
                 {/* Left Column: Text */}
-                <motion.div style={{ y: yText }} className="flex flex-col space-y-8 will-change-transform">
+                <motion.div style={{ y: yText }} className={`flex flex-col space-y-8 ${isMobile ? '' : 'will-change-transform'}`}>
                     <div className="flex items-center gap-2">
                         <div className="w-2 h-2 bg-[#00FF41] animate-pulse" />
                         <span className="text-[#00FF41] font-mono text-xs tracking-widest uppercase">
@@ -60,7 +60,7 @@ export function TacticalTelemetry() {
                 </motion.div>
 
                 {/* Right Column: Cards */}
-                <motion.div style={{ y: yCards }} className="flex flex-col gap-6 will-change-transform">
+                <motion.div style={{ y: yCards }} className={`flex flex-col gap-6 ${isMobile ? '' : 'will-change-transform'}`}>
                     <Card
                         id="01"
                         icon={<Cpu className="text-[#00FF41]" />}

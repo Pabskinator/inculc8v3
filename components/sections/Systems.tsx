@@ -56,7 +56,7 @@ export function Systems() {
             <div className="container mx-auto px-4 md:px-6 relative z-10">
 
                 {/* Main Window Container */}
-                <div className={`relative w-full bg-[#0A0A0A]/60 ${isMobile ? 'backdrop-blur-md' : 'backdrop-blur-2xl'} border border-white/10 rounded-3xl p-8 md:p-12 overflow-hidden shadow-2xl`}>
+                <div className={`relative w-full bg-[#0A0A0A]/60 ${isMobile ? 'backdrop-blur-none bg-[#0A0A0A]' : 'backdrop-blur-2xl'} border border-white/10 rounded-3xl p-8 md:p-12 overflow-hidden ${isMobile ? '' : 'shadow-2xl'}`}>
 
                     {/* Window Controls & Header */}
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-16 gap-6 relative z-20">
@@ -145,7 +145,21 @@ export function Systems() {
 }
 
 function Bar({ height, color, index }: { height: number, color: string, index: number }) {
-    // CSS-driven animation (Deterministic to fix hydration mismatch)
+    const isMobile = useMobile()
+
+    if (isMobile) {
+        return (
+            <div
+                className={`w-full rounded-sm ${color}`}
+                style={{
+                    height: `${height}%`,
+                    opacity: 0.8 // Static opacity, no animation
+                }}
+            />
+        )
+    }
+
+    // CSS-driven animation (Desktop only)
     const duration = 1.5 + (index % 5) * 0.2;
     const delay = (index % 10) * 0.1;
 
