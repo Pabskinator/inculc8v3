@@ -80,10 +80,15 @@ export function Intelligence() {
                             // ENCRYPTED_FIELD_REPORTS<br />
                             // ACCESS_LEVEL: CLEARANCE_REQ
                         </p>
-                        <ScrambleText
-                            text="Latest tactical insights and operational methodologies declassified for public review."
-                            className="text-white/60"
-                        />
+                        <motion.p
+                            initial={{ opacity: 0, y: 10 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.8, delay: 0.2 }}
+                            viewport={{ once: true }}
+                            className="text-white/60 text-sm md:text-base leading-relaxed"
+                        >
+                            Latest tactical insights and operational methodologies declassified for public review.
+                        </motion.p>
                     </div>
                 </div>
 
