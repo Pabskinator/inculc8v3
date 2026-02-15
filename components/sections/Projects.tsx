@@ -3,7 +3,9 @@
 import { motion, AnimatePresence } from "framer-motion"
 import { ArrowUpRight } from "lucide-react"
 import { useState } from "react"
+import { useState } from "react"
 import Image from "next/image"
+import { useMobile } from "@/hooks/use-mobile"
 
 const projects = [
     {
@@ -37,6 +39,7 @@ const projects = [
 
 export function Projects() {
     const [activeIndex, setActiveIndex] = useState<number | null>(1) // Default to middle card open
+    const isMobile = useMobile()
 
     return (
         <section id="projects" className="py-32 bg-black relative border-t border-white/5 overflow-hidden">
@@ -56,20 +59,20 @@ export function Projects() {
                 </div>
 
                 {/* Expanding Flex Gallery */}
-                <div className="flex flex-col lg:flex-row gap-4 h-[600px] w-full">
+                <div className="flex flex-col lg:flex-row gap-4 h-auto lg:h-[600px] w-full">
                     {projects.map((project, i) => {
-                        const isActive = activeIndex === i;
+                        const isActive = isMobile ? true : activeIndex === i;
 
                         return (
                             <motion.div
                                 key={i}
-                                onHoverStart={() => setActiveIndex(i)}
+                                onHoverStart={() => !isMobile && setActiveIndex(i)}
                                 onClick={() => setActiveIndex(i)}
-                                layout
+                                layout={!isMobile}
                                 transition={{ type: "spring", stiffness: 200, damping: 20 }}
                                 className={`relative rounded-3xl overflow-hidden cursor-pointer border border-white/10 transition-colors duration-500
                                     ${isActive ? 'lg:flex-[3] flex-[3]' : 'lg:flex-[1] flex-[1]'}
-                                    h-[200px] lg:h-auto min-h-[100px]
+                                    h-[400px] lg:h-auto min-h-[100px]
                                 `}
                             >
                                 {/* Background Image */}

@@ -236,7 +236,7 @@ function ProtocolNode({ protocol, index }: { protocol: any, index: number }) {
         <motion.div
             ref={ref}
             style={{ opacity, scale, y }}
-            className={`flex items-center justify-between w-full ${isEven ? 'flex-row' : 'flex-row-reverse'}`}
+            className={`flex flex-col md:flex-row items-center justify-between w-full ${isEven ? 'md:flex-row' : 'md:flex-row-reverse'} gap-8 md:gap-0`}
         >
             {/* Content Card */}
             <div className={`w-full md:w-5/12 ${isEven ? 'text-right' : 'text-left'}`}>

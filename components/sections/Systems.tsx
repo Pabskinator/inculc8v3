@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion"
 import { Monitor, Cpu, Network, ArrowRight, Activity, Database, Lock } from "lucide-react"
+import { useMobile } from "@/hooks/use-mobile"
 
 const modules = [
     {
@@ -47,13 +48,15 @@ const modules = [
 ]
 
 export function Systems() {
+    const isMobile = useMobile()
+
     return (
         <section id="systems" className="relative py-32 w-full bg-transparent overflow-hidden border-t border-white/5">
 
             <div className="container mx-auto px-4 md:px-6 relative z-10">
 
                 {/* Main Window Container */}
-                <div className="relative w-full bg-[#0A0A0A]/60 backdrop-blur-2xl border border-white/10 rounded-3xl p-8 md:p-12 overflow-hidden shadow-2xl">
+                <div className={`relative w-full bg-[#0A0A0A]/60 ${isMobile ? 'backdrop-blur-md' : 'backdrop-blur-2xl'} border border-white/10 rounded-3xl p-8 md:p-12 overflow-hidden shadow-2xl`}>
 
                     {/* Window Controls & Header */}
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-16 gap-6 relative z-20">
