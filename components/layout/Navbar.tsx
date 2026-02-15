@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils"
 import Link from "next/link"
 import { Logo } from "@/components/ui/Logo"
 import { useLenis } from "@/components/layout/SmoothScroller"
+import { useMobile } from "@/hooks/use-mobile"
 
 const navItems = [
     { name: "SYSTEMS", href: "#systems" },
