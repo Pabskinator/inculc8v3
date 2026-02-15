@@ -11,7 +11,7 @@ function cn(...inputs: ClassValue[]) {
 }
 
 interface ButtonProps extends Omit<HTMLMotionProps<"button">, "children"> {
-    variant?: "primary" | "secondary" | "danger" | "ghost"
+    variant?: "primary" | "secondary" | "danger" | "ghost" | "outline"
     size?: "sm" | "md" | "lg"
     icon?: React.ReactNode
     children: React.ReactNode
@@ -22,6 +22,7 @@ const variants = {
     secondary: "bg-transparent border border-white/10 text-white/70 hover:text-white hover:border-white/30",
     danger: "bg-red-500/10 border border-red-500/50 text-red-500 hover:bg-red-500/20",
     ghost: "bg-transparent text-white/60 hover:text-white hover:bg-white/5",
+    outline: "bg-transparent border border-accent/20 text-accent hover:bg-accent/10 hover:border-accent/50",
 }
 
 const sizes = {
