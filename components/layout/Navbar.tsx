@@ -105,3 +105,4 @@ function NavbarContent({ isMobile }: { isMobile: boolean }) {
 // Placeholder export to satisfy linter (will be deleted by replace)
 export function NavbarLegacy() {
     return null
+}
