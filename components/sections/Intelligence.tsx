@@ -117,7 +117,7 @@ function IntelCard({ article, index }: { article: any, index: number }) {
             transition={{ delay: index * 0.1, duration: 0.5 }}
             className={cn(
                 "group relative h-[400px] flex flex-col justify-between overflow-hidden cursor-pointer",
-                "bg-black/40 backdrop-blur-md border transition-all duration-500",
+                "bg-black/40 backdrop-blur-md border transition-colors duration-500",
                 isRestricted
                     ? "border-red-500/20 hover:border-red-500/50 hover:bg-red-950/10"
                     : "border-white/10 hover:border-accent/50 hover:bg-accent/5"

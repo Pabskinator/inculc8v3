@@ -91,7 +91,7 @@ export function Systems() {
                         {modules.map((mod, i) => (
                             <div
                                 key={mod.id}
-                                className="group relative h-[400px] flex flex-col justify-between bg-[#0A0A0A]/40 backdrop-blur-xl border border-white/5 rounded-2xl overflow-hidden hover:border-white/20 transition-all duration-500 hover:shadow-lg hover:shadow-[0_0_30px_-10px_rgba(0,0,0,0.5)]"
+                                className="group relative h-[400px] flex flex-col justify-between bg-[#0A0A0A]/40 backdrop-blur-xl border border-white/5 rounded-2xl overflow-hidden hover:border-white/20 transition-colors duration-500 hover:shadow-lg hover:shadow-[0_0_30px_-10px_rgba(0,0,0,0.5)]"
                                 style={{
                                     boxShadow: `0 0 0 1px ${mod.color}05` // Subtle colored border hint
                                 }}

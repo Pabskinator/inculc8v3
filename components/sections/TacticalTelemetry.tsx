@@ -81,7 +81,7 @@ export function TacticalTelemetry() {
 
 function Card({ id, icon, title, description, tags }: { id: string, icon: React.ReactNode, title: string, description: string, tags: string[] }) {
     return (
-        <div className="group relative bg-[#0A0A0A]/60 backdrop-blur-xl border border-white/5 p-8 hover:border-[#00FF41]/50 transition-all duration-500 overflow-hidden">
+        <div className="group relative bg-[#0A0A0A]/60 backdrop-blur-xl border border-white/5 p-8 hover:border-[#00FF41]/50 transition-colors duration-500 overflow-hidden">
 
             {/* Tactical Corners */}
             <div className="absolute top-0 left-0 w-4 h-4 border-t border-l border-[#00FF41]/30 group-hover:border-[#00FF41] transition-colors duration-300" />

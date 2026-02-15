@@ -240,7 +240,7 @@ function ProtocolNode({ protocol, index }: { protocol: any, index: number }) {
         >
             {/* Content Card */}
             <div className={`w-full md:w-5/12 ${isEven ? 'text-right' : 'text-left'}`}>
-                <div className="bg-white/5 backdrop-blur-xl border border-white/10 p-8 md:p-10 rounded-3xl relative group hover:border-accent/40 transition-all duration-500 hover:bg-white/[0.07] overflow-hidden">
+                <div className="bg-white/5 backdrop-blur-xl border border-white/10 p-8 md:p-10 rounded-3xl relative group hover:border-accent/40 transition-colors duration-500 hover:bg-white/[0.07] overflow-hidden">
 
                     {/* Connection dot */}
                     <div className={`hidden md:block absolute top-1/2 w-3 h-3 rounded-full bg-accent z-10 ${isEven ? '-right-[1.5rem] translate-x-3' : '-left-[1.5rem] -translate-x-3'}`} />

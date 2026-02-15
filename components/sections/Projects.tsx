@@ -3,7 +3,6 @@
 import { motion, AnimatePresence } from "framer-motion"
 import { ArrowUpRight } from "lucide-react"
 import { useState } from "react"
-import { useState } from "react"
 import Image from "next/image"
 import { useMobile } from "@/hooks/use-mobile"
 
@@ -80,7 +79,7 @@ export function Projects() {
                                     src={project.image}
                                     alt={project.name}
                                     fill
-                                    className={`object-cover transition-all duration-700 ${isActive ? 'scale-100 opacity-60' : 'scale-110 opacity-30 grayscale'}`}
+                                    className={`object-cover transition-transform duration-700 ${isActive ? 'scale-100 opacity-60' : 'scale-110 opacity-30 grayscale'}`}
                                 />
 
                                 {/* Gradient Overlays */}
