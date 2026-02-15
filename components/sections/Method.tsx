@@ -60,7 +60,7 @@ export function Method() {
     const rocketRotation = useTransform(smoothVelocity, (latest) => {
         if (Math.abs(latest) < 5) return 90 // Neutral/Side when idle? Or keep last? 
         // Actually, just mapping direction is safer.
-        return latest < 0 ? 0 : 180
+        return (latest < 0 ? 0 : 180) as number
     })
     // Smooth the rotation so it snaps but not instantly jittery
     const smoothRotation = useSpring(rocketRotation, { stiffness: 200, damping: 30 })
