@@ -60,7 +60,7 @@ export function Intelligence() {
                             <span className="font-mono text-xs text-accent tracking-widest">SYSTEM_STATUS: ONLINE</span>
                         </div>
 
-                        <h2 className="text-5xl md:text-7xl font-heading font-bold tracking-tighter text-white">
+                        <h2 className="text-3xl sm:text-4xl md:text-7xl font-heading font-bold tracking-tighter text-white">
                             <span className="block mb-2 text-transparent bg-clip-text bg-gradient-to-r from-white to-white/50">
                                 INTELLIGENCE
                             </span>

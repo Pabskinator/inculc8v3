@@ -151,19 +151,8 @@ export function Systems() {
 function Bar({ height, color, index }: { height: number, color: string, index: number }) {
     const isMobile = useMobile()
 
-    if (isMobile) {
-        return (
-            <div
-                className={`w-full rounded-sm ${color}`}
-                style={{
-                    height: `${height}%`,
-                    opacity: 0.8 // Static opacity, no animation
-                }}
-            />
-        )
-    }
-
-    // CSS-driven animation (Desktop only)
+    // CSS-driven animation (Desktop & Mobile)
+    // We render this on mobile now too, as it is just 3 bars per card and uses efficient CSS keyframes.
     const duration = 1.5 + (index % 5) * 0.2;
     const delay = (index % 10) * 0.1;
 

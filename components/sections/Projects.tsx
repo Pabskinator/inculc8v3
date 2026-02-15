@@ -48,7 +48,7 @@ export function Projects() {
                 {/* Header */}
                 <div className="mb-16 flex flex-col md:flex-row justify-between items-end gap-8">
                     <div>
-                        <h2 className="text-4xl md:text-6xl font-heading font-bold mb-4">
+                        <h2 className="text-3xl sm:text-4xl md:text-6xl font-heading font-bold mb-4">
                             DEPLOYMENT LOGS
                         </h2>
                         <div className="max-w-md font-mono text-sm text-white/60">

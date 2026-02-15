@@ -58,7 +58,7 @@ function MethodMobile() {
 
             <div className="container mx-auto px-4 relative z-10">
                 <div className="text-center mb-16">
-                    <h2 className="text-5xl font-heading font-bold mb-6 tracking-tighter">
+                    <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-8xl font-heading font-bold mb-6 tracking-tighter">
                         <span className="text-white block">MISSION</span>
                         <span className="text-transparent bg-clip-text bg-gradient-to-b from-white/80 to-white/20">TRAJECTORY</span>
                     </h2>

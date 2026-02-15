@@ -38,10 +38,10 @@ function TacticalTelemetryMobile() {
                     </div>
 
                     <div className="flex flex-col">
-                        <h2 className="text-5xl md:text-7xl lg:text-8xl font-heading font-bold tracking-tighter text-white leading-[0.9]">
+                        <h2 className="text-3xl sm:text-4xl md:text-7xl lg:text-8xl font-heading font-bold tracking-tighter text-white leading-[0.9]">
                             TACTICAL
                         </h2>
-                        <div className="text-5xl md:text-7xl lg:text-8xl font-heading font-bold tracking-tighter h-[1.1em] md:h-[0.9em] flex items-center overflow-hidden">
+                        <div className="text-3xl sm:text-4xl md:text-7xl lg:text-8xl font-heading font-bold tracking-tighter h-[1.1em] md:h-[0.9em] flex items-center overflow-hidden">
                             <ScrambleText
                                 text="TELEMETRY"
                                 className="text-transparent bg-clip-text bg-gradient-to-r from-[#00FF41] via-[#CCFF00] to-[#00FF41] leading-[0.9]"
