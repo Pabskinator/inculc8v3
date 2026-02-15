@@ -260,7 +260,7 @@ function ProtocolNode({ protocol, index }: { protocol: any, index: number }) {
                     </div>
 
                     <h3 className="text-2xl md:text-4xl font-heading font-bold text-white mb-4 leading-none break-words">
-                        <ScrambleText text={protocol.title} />
+                        <ScrambleText text={protocol.title} revealSpeed={40} scrambleSpeed={50} />
                     </h3>
 
                     <p className="text-white/60 leading-relaxed font-light text-sm md:text-base break-words">

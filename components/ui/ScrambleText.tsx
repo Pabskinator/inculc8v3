@@ -17,8 +17,8 @@ interface ScrambleTextProps {
 export function ScrambleText({
     text,
     className = "",
-    scrambleSpeed = 30,
-    revealSpeed = 100,
+    scrambleSpeed = 50,
+    revealSpeed = 50,
     delay = 0
 }: ScrambleTextProps) {
     const [displayText, setDisplayText] = useState(text.split("").map(() => "_").join(""))
@@ -45,7 +45,7 @@ export function ScrambleText({
             let iteration = 0
 
             // Optimization: Use setInterval instead of RAF to throttle updates
-            // Running at ~20fps (50ms) instead of 60fps (16ms)
+            // Running at ~33fps (30ms) for faster but still throttled updates
             const intervalId = setInterval(() => {
                 const result = text
                     .split("")
@@ -66,7 +66,7 @@ export function ScrambleText({
                     setIsComplete(true)
                     clearInterval(intervalId)
                 }
-            }, 50) // 50ms throttle
+            }, 30) // 30ms throttle
 
             // Store interval id to clear if unmounted
             frameId = Number(intervalId)
