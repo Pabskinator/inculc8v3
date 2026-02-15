@@ -50,7 +50,7 @@ export function ScrollToTop() {
             animate={isVisible ? "visible" : "hidden"}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            onHoverStart={() => setIsVisible(true) && setIsHovered(true)} // Keep visible on hover just in case
+            onHoverStart={() => { setIsVisible(true); setIsHovered(true) }} // Keep visible on hover just in case
             onHoverEnd={() => setIsHovered(false)}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
