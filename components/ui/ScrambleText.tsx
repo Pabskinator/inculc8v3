@@ -24,7 +24,6 @@ export function ScrambleText({
     const [displayText, setDisplayText] = useState(text.split("").map(() => "_").join(""))
     const [isComplete, setIsComplete] = useState(false)
     const ref = useRef<HTMLSpanElement>(null)
-    const ref = useRef<HTMLSpanElement>(null)
     const isInView = useInView(ref, { once: true, margin: "-100px" })
     const isMobile = useMobile()
 
