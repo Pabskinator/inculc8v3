@@ -61,8 +61,10 @@ export function Scene({ onNodeHover }: { onNodeHover?: (node: NodeData) => void 
     useEffect(() => {
         setMounted(true)
         const checkMobile = () => {
-            // Simplified check: Just width. Touch detection on desktop monitors shouldn't downgrade to 2D.
-            setIsMobile(window.innerWidth < 768)
+            // Mobile/Tablet check: 1024px to cover iPads/Pro usage.
+            // Also check for touch capability to be sure we aren't nuking desktop windows that are just resized small?
+            // Actually, for performance, if it's small, kill the 3D scene regardless of input device.
+            setIsMobile(window.innerWidth < 1024)
         }
         checkMobile()
         window.addEventListener("resize", checkMobile)

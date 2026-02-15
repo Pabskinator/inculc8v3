@@ -21,8 +21,13 @@ export function SmoothScroller({ children }: { children: React.ReactNode }) {
 
     useEffect(() => {
         // Mobile Optimization: Disable custom smooth scroll on touch devices to use native acceleration
-        const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-        if (isTouch) return;
+        // We use a broader check to catch tablets
+        const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0 || window.innerWidth < 1024;
+
+        if (isTouch) {
+            document.documentElement.classList.add('lenis-stopped'); // Helper for CSS if needed
+            return;
+        }
 
         const lenisInstance = new Lenis({
             duration: 1.0,
