@@ -5,8 +5,10 @@ import { Float, PerspectiveCamera, Stars, Grid, Sparkles, Line } from "@react-th
 import { useMemo, useRef, useState, forwardRef, createRef, useEffect } from "react"
 import * as THREE from "three"
 import { EffectComposer, Bloom, Vignette } from "@react-three/postprocessing"
+import { useInView } from "framer-motion"
 
 import { useInteraction } from "@/components/context/InteractionContext"
+import { SceneFallback } from "./SceneFallback"
 
 export type NodeData = {
     id: string
@@ -17,6 +19,8 @@ export type NodeData = {
 
 export function Scene({ onNodeHover }: { onNodeHover?: (node: NodeData) => void }) {
     const { setActiveNode } = useInteraction()
+    const containerRef = useRef(null)
+    const isInView = useInView(containerRef, { margin: "100px" }) // Pause when 100px out of view
 
     // Generate nodes and refs in the same memo so they are stable
     const { nodes, nodeRefs } = useMemo(() => {
@@ -52,19 +56,36 @@ export function Scene({ onNodeHover }: { onNodeHover?: (node: NodeData) => void 
     }, [])
 
     const [isMobile, setIsMobile] = useState(false)
+    const [mounted, setMounted] = useState(false)
 
     useEffect(() => {
+        setMounted(true)
         const checkMobile = () => {
-            setIsMobile(window.innerWidth < 768)
+            // A more aggressive check for "mobile" to force fallback
+            // Includes small screens OR touch devices to be safe
+            setIsMobile(window.innerWidth < 768 || ('ontouchstart' in window && window.innerWidth < 1024))
         }
         checkMobile()
         window.addEventListener("resize", checkMobile)
         return () => window.removeEventListener("resize", checkMobile)
     }, [])
 
+    if (!mounted) return null
+
+    // NUCLEAR OPTION: Mobile Fallback
+    // If mobile, DO NOT MOUNT CANVAS. Return lightweight DOM fallback.
+    if (isMobile) {
+        return <SceneFallback />
+    }
+
     return (
-        <div className="absolute inset-0 z-0">
-            <Canvas dpr={isMobile ? [1, 1] : [1, 1.5]} performance={{ min: 0.5 }}>
+        <div ref={containerRef} className="absolute inset-0 z-0">
+            {/* Pausing Logic: frameloop="never" when off-screen to stop RAF loop */}
+            <Canvas
+                dpr={[1, 1.5]}
+                performance={{ min: 0.5 }}
+                frameloop={isInView ? "always" : "never"}
+            >
                 <PerspectiveCamera makeDefault position={[0, 0, 15]} fov={50} />
 
                 <color attach="background" args={["#050505"]} />
@@ -85,12 +106,10 @@ export function Scene({ onNodeHover }: { onNodeHover?: (node: NodeData) => void 
                     }}
                 />
 
-                {!isMobile && (
-                    <EffectComposer>
-                        <Bloom luminanceThreshold={0.5} luminanceSmoothing={0.9} height={300} intensity={0.5} />
-                        <Vignette eskil={false} offset={0.1} darkness={1.1} />
-                    </EffectComposer>
-                )}
+                <EffectComposer enabled={isInView}>
+                    <Bloom luminanceThreshold={0.5} luminanceSmoothing={0.9} height={300} intensity={0.5} />
+                    <Vignette eskil={false} offset={0.1} darkness={1.1} />
+                </EffectComposer>
             </Canvas>
         </div>
     )
@@ -125,6 +144,7 @@ function HeroSceneGroup({ nodes, nodeRefs, onNodeHover }: { nodes: NodeData[], n
         groupRef.current.position.y = scrollY * ratio * 0.5
 
         const heroHeight = window.innerHeight
+        // Just visibility toggle here. The parent component handles the loop stopping.
         groupRef.current.visible = scrollY < heroHeight * 1.5
     })
 
@@ -168,6 +188,9 @@ function HeroSceneGroup({ nodes, nodeRefs, onNodeHover }: { nodes: NodeData[], n
 function NetworkConnections({ nodeRefs, count }: { nodeRefs: React.RefObject<THREE.Mesh | null>[], count: number }) {
     const linesGeometryRef = useRef<THREE.BufferGeometry>(null)
 
+    // Throttling Ref
+    const frameCount = useRef(0)
+
     // We need 2 points per line, and (count - 1) lines
     const lineCount = count - 1
     const particleCount = lineCount * 2
@@ -180,6 +203,11 @@ function NetworkConnections({ nodeRefs, count }: { nodeRefs: React.RefObject<THR
 
     useFrame(() => {
         if (!linesGeometryRef.current) return
+
+        // OPTIMIZATION (E): Loop Throttling
+        // Only update every 3rd frame to save CPU
+        frameCount.current++
+        if (frameCount.current % 3 !== 0) return
 
         let validPoints = 0
 
@@ -254,15 +282,6 @@ const NetworkNode = forwardRef<THREE.Mesh, { data: NodeData, onHover?: (n: NodeD
                 onPointerOut={() => {
                     setHover(false)
                     document.body.style.cursor = "auto"
-                    // Clear the active node in context if we just left
-                    // You might want to pass a "clear" callback, but simpler is passing null to onHover
-                    // if the parent handler supports it. 
-                    // However, types say NodeData only. 
-                    // Let's assume the parent handles clearing or we modify type.
-                    // Actually, simpler: Let's modify the onHover prop in Scene to accept null or handle in parent.
-                    // But for now, let's just make it call with data.
-                    // To clear, we need to handle "onPointerMissed" on Canvas or just accept it stays until another is hovered?
-                    // Text staying is usually better UX than flickering.
                 }}
             >
                 <octahedronGeometry args={[0.5, 0]} />
