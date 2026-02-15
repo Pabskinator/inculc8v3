@@ -10,17 +10,17 @@ export function CyberGrid({ scrollYProgress }: { scrollYProgress?: MotionValue<n
     const scroll = scrollYProgress || defaultMotion
 
     // OPTIMIZED PERF: Removed dynamic rotateX to prevent constant re-rasterization
-    // 1. Grid moves significantly
-    const gridY = useTransform(scroll, [0, 1], ["-20%", "20%"])
+    // 1. Grid moves significantly (DISABLED ON MOBILE for static bg)
+    const gridY = useTransform(scroll, [0, 1], isMobile ? ["0%", "0%"] : ["-20%", "20%"])
 
     // 2. Scale "zooms out" reveals the grid (Cheaper than perspective change)
-    const gridScale = useTransform(scroll, [0, 1], [1.5, 1])
+    const gridScale = useTransform(scroll, [0, 1], isMobile ? [1, 1] : [1.5, 1])
 
     // 3. Background Opacity for fade in/out
-    const gridOpacity = useTransform(scroll, [0, 0.2, 0.8, 1], [0, 1, 1, 0])
+    const gridOpacity = useTransform(scroll, [0, 0.2, 0.8, 1], isMobile ? [1, 1, 1, 1] : [0, 1, 1, 0])
 
     // 4. Floating ceiling moves in OPPOSITE direction for depth
-    const ceilingY = useTransform(scroll, [0, 1], ["0%", "-40%"])
+    const ceilingY = useTransform(scroll, [0, 1], isMobile ? ["0%", "0%"] : ["0%", "-40%"])
 
     return (
         <div className="absolute inset-0 overflow-hidden pointer-events-none z-0 bg-[#050505]">

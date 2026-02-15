@@ -130,7 +130,7 @@ export function Systems() {
 
                                 {/* Live Bar Chart Area */}
                                 <div className="relative h-24 mt-auto px-6 pb-6 flex items-end gap-2 opacity-50 group-hover:opacity-100 transition-opacity duration-500">
-                                    {(isMobile ? mod.bars.slice(0, 6) : mod.bars).map((height, idx) => (
+                                    {(isMobile ? mod.bars.slice(0, 3) : mod.bars).map((height, idx) => (
                                         <Bar key={idx} height={height} color={mod.chartColor} index={idx} />
                                     ))}
                                 </div>

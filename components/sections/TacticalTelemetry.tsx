@@ -5,6 +5,7 @@ import { useRef } from "react"
 import { ArrowUpRight, Cpu, Network } from "lucide-react"
 import { ScrambleText } from "@/components/ui/ScrambleText"
 import { CyberGrid } from "@/components/ui/CyberGrid"
+import { useMobile } from "@/hooks/use-mobile"
 
 export function TacticalTelemetry() {
     const containerRef = useRef<HTMLDivElement>(null)
@@ -13,9 +14,11 @@ export function TacticalTelemetry() {
         offset: ["start end", "end start"]
     })
 
-    // Parallax effects for content
-    const yText = useTransform(scrollYProgress, [0, 1], [50, -50])
-    const yCards = useTransform(scrollYProgress, [0, 1], [150, -150])
+    const isMobile = useMobile()
+
+    // Parallax effects for content (DISABLED ON MOBILE)
+    const yText = useTransform(scrollYProgress, [0, 1], isMobile ? [0, 0] : [50, -50])
+    const yCards = useTransform(scrollYProgress, [0, 1], isMobile ? [0, 0] : [150, -150])
 
     return (
         <section ref={containerRef} className="relative min-h-screen w-full bg-[#050505] overflow-hidden flex items-center py-20 border-t border-white/5">
