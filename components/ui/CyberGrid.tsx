@@ -1,8 +1,10 @@
 "use client"
 
 import { motion, MotionValue, useTransform, useMotionValue } from "framer-motion"
+import { useMobile } from "@/hooks/use-mobile"
 
 export function CyberGrid({ scrollYProgress }: { scrollYProgress?: MotionValue<number> }) {
+    const isMobile = useMobile()
     // Default motion value if none provided
     const defaultMotion = useMotionValue(0)
     const scroll = scrollYProgress || defaultMotion
@@ -63,12 +65,14 @@ export function CyberGrid({ scrollYProgress }: { scrollYProgress?: MotionValue<n
                 className="absolute left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#00FF41] to-transparent shadow-[0_0_20px_rgba(0,255,65,0.5)] z-10"
             />
 
-            {/* 4. Ambient "Searchlight" Beam */}
-            <motion.div
-                animate={{ rotate: [0, 360] }}
-                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150vmax] h-[150vmax] bg-[conic-gradient(from_0deg,transparent_0deg,rgba(0,255,65,0.05)_20deg,transparent_40deg)] opacity-40 pointer-events-none mix-blend-screen"
-            />
+            {/* 4. Ambient "Searchlight" Beam - DISABLED ON MOBILE */}
+            {!isMobile && (
+                <motion.div
+                    animate={{ rotate: [0, 360] }}
+                    transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150vmax] h-[150vmax] bg-[conic-gradient(from_0deg,transparent_0deg,rgba(0,255,65,0.05)_20deg,transparent_40deg)] opacity-40 pointer-events-none mix-blend-screen"
+                />
+            )}
 
             {/* 5. Vignette & Fog for depth */}
             <div className="absolute inset-0 bg-radial-gradient(circle at center, transparent 0%, #050505 90%) pointer-events-none" />

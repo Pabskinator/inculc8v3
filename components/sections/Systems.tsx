@@ -130,7 +130,7 @@ export function Systems() {
 
                                 {/* Live Bar Chart Area */}
                                 <div className="relative h-24 mt-auto px-6 pb-6 flex items-end gap-2 opacity-50 group-hover:opacity-100 transition-opacity duration-500">
-                                    {mod.bars.map((height, idx) => (
+                                    {(isMobile ? mod.bars.slice(0, 6) : mod.bars).map((height, idx) => (
                                         <Bar key={idx} height={height} color={mod.chartColor} index={idx} />
                                     ))}
                                 </div>
@@ -145,20 +145,19 @@ export function Systems() {
 }
 
 function Bar({ height, color, index }: { height: number, color: string, index: number }) {
-    // Random fluctuation animation
+    // CSS-driven animation for zero main-thread overhead
+    // Randomize duration and delay slightly for organic feel
+    const duration = 1.5 + (index % 3) * 0.5 + Math.random() * 0.5;
+    const delay = index * 0.1;
+
     return (
-        <motion.div
-            animate={{
-                height: [height + "%", height * 0.6 + "%", height * 1.2 + "%", height + "%"],
-            }}
-            transition={{
-                duration: 2 + Math.random(),
-                repeat: Infinity,
-                ease: "easeInOut",
-                delay: index * 0.1
-            }}
+        <div
             className={`w-full rounded-sm ${color}`}
-            style={{ height: `${height}%` }}
+            style={{
+                height: `${height}%`,
+                animation: `equalizer ${duration}s ease-in-out infinite`,
+                animationDelay: `${delay}s`
+            }}
         />
     )
 }
